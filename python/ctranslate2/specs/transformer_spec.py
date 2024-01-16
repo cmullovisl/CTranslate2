@@ -271,7 +271,8 @@ class TransformerDecoderLayerSpec(model_spec.LayerSpec):
                 sliding_window=sliding_window,
             )
 
-        self.ffn = FeedForwardSpec(glu=ffn_glu, rms_norm=rms_norm)
+        self.ffn1 = FeedForwardSpec(glu=ffn_glu, rms_norm=rms_norm)
+        self.ffn2 = FeedForwardSpec(glu=ffn_glu, rms_norm=rms_norm)
 
         if parallel_residual:
             if shared_layer_norm:
@@ -281,7 +282,8 @@ class TransformerDecoderLayerSpec(model_spec.LayerSpec):
                 self.post_attention_layer_norm = common_spec.LayerNormSpec()
 
             delattr(self.self_attention, "layer_norm")
-            delattr(self.ffn, "layer_norm")
+            delattr(self.ffn1, "layer_norm")
+            delattr(self.ffn2, "layer_norm")
 
 
 class FeedForwardSpec(model_spec.LayerSpec):

@@ -105,7 +105,8 @@ namespace ctranslate2 {
                                                                     /*self_attention=*/false,
                                                                     pre_norm,
                                                                     /*is_decoder=*/true))
-      , _ff(model, scope + "/ffn", pre_norm, activation_type) {
+      , _ff1(model, scope + "/ffn1", pre_norm, activation_type)
+      , _ff2(model, scope + "/ffn2", pre_norm, activation_type) {
     }
 
     void TransformerDecoderLayer::operator()(const StorageView& input,
@@ -156,7 +157,8 @@ namespace ctranslate2 {
         if (_post_attention_layer_norm)
           (*_post_attention_layer_norm)(input, hidden);
 
-        _ff(hidden, output);
+        //_ff2(hidden, output);
+        _ff1(hidden, output);
 
         ops::Add()(output, input, output);
         ops::Add()(output, attn, output);
@@ -177,6 +179,12 @@ namespace ctranslate2 {
                       position_bias,
                       offset);
 
+
+      StorageView hidden(dtype, device);
+      // match fairseq implementation: fc3, fc4 come before fc1, fc2
+      _ff2(output, hidden);
+      output = std::move(hidden);
+
       StorageView context(dtype, device);
       if (_encoder_attention) {
         (*_encoder_attention)(output,
@@ -193,7 +201,8 @@ namespace ctranslate2 {
         context = std::move(output);
       }
 
-      _ff(context, output);
+      //_ff2(context, output);
+      _ff1(context, output);
     }
 
 

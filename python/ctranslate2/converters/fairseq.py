@@ -13,6 +13,7 @@ _SUPPORTED_MODELS = {
     "transformer",
     "transformer_align",
     "transformer_lm",
+    "deltalm",
 }
 
 
@@ -241,7 +242,8 @@ def set_transformer_encoder_layer(spec, module):
 
 
 def set_transformer_decoder_layer(spec, module, with_encoder_attention=True):
-    set_ffn(spec.ffn, module)
+    set_ffn(spec.ffn1, module)
+    set_ffn2(spec.ffn2, module)
     set_multi_head_attention(spec.self_attention, module.self_attn, self_attention=True)
     set_layer_norm(spec.self_attention.layer_norm, module.self_attn_layer_norm)
     if with_encoder_attention:
@@ -253,6 +255,12 @@ def set_ffn(spec, module):
     set_layer_norm(spec.layer_norm, module.final_layer_norm)
     set_linear(spec.linear_0, module.fc1)
     set_linear(spec.linear_1, module.fc2)
+
+
+def set_ffn2(spec, module):
+    set_layer_norm(spec.layer_norm, module.ffn_layer_norm)
+    set_linear(spec.linear_0, module.fc3)
+    set_linear(spec.linear_1, module.fc4)
 
 
 def set_multi_head_attention(spec, module, self_attention=False):
