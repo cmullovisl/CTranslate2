@@ -99,11 +99,11 @@ namespace ctranslate2 {
                       dim_t offset = 0) const;
 
       DataType output_type() const override {
-        return _ff.output_type();
+        return _ff1.output_type();
       }
 
       dim_t output_size() const override {
-        return _ff.output_size();
+        return _ff1.output_size();
       }
 
       bool has_cross_attention() const {
@@ -122,7 +122,8 @@ namespace ctranslate2 {
       const std::unique_ptr<const LayerNorm> _pre_feedforward_layer_norm;
       const std::unique_ptr<const LayerNorm> _post_feedforward_layer_norm;
       const std::unique_ptr<const AttentionLayer> _encoder_attention;
-      const FeedForwardNetwork _ff;
+      const FeedForwardNetwork _ff1;
+      const FeedForwardNetwork _ff2;
     };
 
     class TransformerEncoder : public Encoder
